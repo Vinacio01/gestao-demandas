@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Demandas</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2563eb;
+        }
+        .form-demanda {
+            max-width: 450px;
+            background: white;
+            margin: 0 auto 30px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .campo { display: flex; flex-direction: column; }
+        label { font-weight: bold; font-size: 14px; }
+        input, textarea, select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .cards-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .coluna {
+            flex: 1;
+            background: #e5e7eb;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .coluna h3 {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .descricao-coluna {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        .cards-wrapper { margin-top: 10px; min-height: 40px; }
+        .card {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-left: 6px solid gray;
+            cursor: grab;
+        }
+        .verde   { border-left-color: #16a34a; }
+        .amarelo { border-left-color: #facc15; }
+        .vermelho { border-left-color: #dc2626; }
+        .tipo { font-size: 11px; color: #6b7280; }
+        .excluir {
+            background: #ef4444;
+            font-size: 12px;
+            padding: 5px;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 5px;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+
+<body>
+
+<h1>Gestão de Demandas</h1>
+
+<form method="post" class="form-demanda">
+    {% csrf_token %}
+    <div class="campo">
+        <label>Título</label>
+        <input type="text" name="titulo" required>
+    </div>
+    <div class="campo">
+        <label>Descrição</label>
+        <textarea name="descricao"></textarea>
+    </div>
+    <div class="campo">
+        <label>Tipo</label>
+        <select name="tipo" required>
+            <option value="Projeto">Projeto</option>
+            <option value="Vistoria">Vistoria</option>
+            <option value="Postar">Postar</option>
+            <option value="Voltar assinado">Voltar assinado</option>
+        </select>
+    </div>
+    <button type="submit">Adicionar</button>
+</form>
+
+<div class="cards-container">
+    {% for coluna_nome, demandas in colunas.items %}
+    <div class="coluna" data-coluna="{{ coluna_nome }}">
+        <h3>{{ coluna_nome }}</h3>
+        <p class="descricao-coluna">Arraste os cards para reorganizar</p>
+        <div class="cards-wrapper">
+            {% for demanda in demandas %}
+                <div class="card {{ demanda.cor }}" data-id="{{ demanda.id }}">
+                    <strong>{{ demanda.titulo }}</strong><br>
+                    {{ demanda.descricao }}<br>
+                    <span class="tipo">{{ demanda.dias_de_criacao }} dias</span>
+                    <form method="post" action="{% url 'excluir_demanda' demanda.id %}">
+                        {% csrf_token %}
+                        <button class="excluir">Excluir</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.querySelectorAll('.cards-wrapper').forEach(function(wrapper) {
+        new Sortable(wrapper, {
+            group: 'shared',
+            animation: 150,
+            onEnd: function (evt) {
+                let cardId = evt.item.dataset.id;
+                let novaColuna = evt.to.closest('.coluna').dataset.coluna;
+
+                fetch("{% url 'mover_demanda' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify({id: cardId, nova_coluna: novaColuna})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status !== "ok") {
+                        alert("Erro ao mover demanda!");
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error("Erro:", error);
+                    location.reload();
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
