@@ -1,31 +1,35 @@
 # Gestão de Demandas
 
-Um sistema web simples para acompanhar demandas/tarefas, com contagem de dias desde a criação e sinalização de urgência.
-
-Esse projeto foi desenvolvido como parte do meu aprendizado em desenvolvimento web com **Python** e **Django**.  
-O objetivo é facilitar o acompanhamento de tarefas do dia a dia com prioridade visual por tempo de duração.
-
+Este é um sistema de gestão de fluxos de trabalho desenvolvido com Django, projetado para organizar, categorizar e acompanhar o ciclo de vida de solicitações internas. Este sistema foi desenvolvido para resolver uma necessidade real de organização de processos, focando em usabilidade e visibilidade de prazos.
 ---
 
 ## Funcionalidades
 
-- Cadastro de demandas
-- Contador que mostra há quantos dias a demanda está ativa
-- Sinalização de urgência com base no tempo de vida da demanda
-- Edição e exclusão de demandas
-- Interface web acessível via navegador
+- Criação e Categorização: Registro de demandas classificadas por tipos (Projeto, Vistoria, Postar, Voltar Assinado).
+- Indicadores Visuais de Prazo (SLA): Sistema inteligente de cores baseado na data de criação para indicar a urgência de cada demanda:
+  - Verde: Criada há menos de 1 dia
+  - Amarelo: Entre 1 e 3 dias de criação.
+  - Vermelho: Mais de 3 dias (atraso/atenção necessária).
+- Gestão de Fluxo: Controle de documentos que precisam "Voltar Assinados", garantindo que nenhuma etapa burocrática seja esquecida.
+- Interface Administrativa: Painel customizado para gestão rápida de dados.
+
 
 ---
 
 ## Tecnologias utilizadas
 
- **Python** — Linguagem principal  
- **Django** — Framework web baseado em MTV (*Model-Template-View*) para desenvolvimento rápido de aplicações web, semelhante à arquitetura moderna de backends
- **HTML e CSS** — Interface de usuário
+ **Linguagem:** Python 3.x Python 3.x  
+ **Framework Web:** Django
+ **Banco de Dados:** SQLite (Desenvolvimento) / Suporte a PostgreSQL (Produção)
+ **Frontend:** Django Templates & CSS Customizado
 
 ---
+O projeto segue o padrão MVT (Model-View-Template) do Django, com foco em uma modelagem de dados enxuta e eficiente:
+- **Lógica de Negócio no Model:** Utilização de @property no modelo Demanda para calcular dinamicamente o status de urgência (cor_status) e o tempo de vida da demanda (dias_de_criacao). Isso garante que a regra de negócio esteja centralizada e seja fácil de manter.
+- **Escalabilidade:** Estrutura preparada para migração para bancos de dados mais robustos (como PostgreSQL) e expansão para uma API REST utilizando Django REST Framework.
 
-## 📁 Estrutura do projeto
+
+##  Estrutura do projeto
 
 ```
 Gestao-de-Demandas/
@@ -43,10 +47,6 @@ Gestao-de-Demandas/
 ├── .gitignore
 └── README.md
 ```
-
-
-Aqui o Django organiza modelos, views e URLs de forma modular para melhor manutenção do código.
-
 ---
 
 ## Instalação (Local)
