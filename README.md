@@ -1,6 +1,6 @@
 ## Gestão de Demandas
 
--Este é um sistema de gestão de fluxos de trabalho desenvolvido com Django, projetado para organizar, categorizar e acompanhar o ciclo de vida de solicitações internas. Este sistema foi desenvolvido para resolver uma necessidade real de organização de processos, focando em usabilidade e visibilidade de prazos.
+-RegistEste é um sistema de gestão de fluxos de trabalho desenvolvido com Django, projetado para organizar, categorizar e acompanhar o ciclo de vida de solicitações internas. Este sistema foi desenvolvido para resolver uma necessidade real de organização de processos, focando em usabilidade e visibilidade de prazos.
 ---
 
 ## Funcionalidades
